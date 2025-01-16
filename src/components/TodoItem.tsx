@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable jsx-a11y/control-has-associated-label */
-import { ErrorMessage } from '../App';
+// import { ErrorMessage } from '../App';
+import { ErrorMessage } from './Errors';
 
 interface TodoItemProps {
   id: number;
@@ -62,17 +63,6 @@ export const TodoItem: React.FC<TodoItemProps> = ({
           ×
         </button>
 
-        {/* <form>
-          <input
-            data-cy="TodoTitleField"
-            type="text"
-            className="todo__title-field"
-            placeholder="Empty todo will be deleted"
-            value="Todo is being edited now"
-          />
-        </form> */}
-
-        {/* overlay will cover the todo while it is being deleted or updated */}
         <div data-cy="TodoLoader" className="modal overlay">
           <div className="modal-background has-background-white-ter" />
           <div className="loader" />

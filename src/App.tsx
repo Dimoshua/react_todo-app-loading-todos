@@ -1,36 +1,28 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { getTodos, USER_ID } from './api/todos';
 
-import { Error } from './components/Error';
+import { Error, ErrorMessage } from './components/Errors';
+
 import { TodoFooter } from './components/TodoFooter';
 import { TodoHeader } from './components/TodoHeader';
 import { TodoList } from './components/TodoList';
 import { UserWarning } from './components/UserWarning';
 
-import { Todo } from './types/Todo';
+import { FILTER_TYPES } from './types/FilterType';
 
-export enum ErrorMessage {
-  Update = 'Unable to update a todo',
-  Add = 'Unable to add a todo',
-  Delete = 'Unable to delete a todo',
-  Get = 'Unable to load todos',
-  Title = 'Title should not be empty',
-}
+import { Todo } from './types/Todo';
 
 export const App: React.FC = () => {
   const [todoList, setTodoList] = useState<Todo[]>([]);
   const [filteredTodos, setFilteredTodos] = useState<Todo[]>([]);
 
   const [isLoading, setIsloading] = useState(false);
-
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     setIsloading(true);
     getTodos()
-      .then(todos => {
-        setTodoList(todos);
-      })
+      .then(setTodoList)
       .catch(() => setErrorMessage(ErrorMessage.Get))
       .finally(() => setIsloading(false));
   }, []);
@@ -77,17 +69,14 @@ export const App: React.FC = () => {
   const handleFilterTodo = useCallback(
     (option: string) => {
       switch (option) {
-        case 'All':
-          setFilteredTodos(todoList);
-          break;
-        case 'Active':
-          setFilteredTodos(todoList.filter(todo => todo.completed === false));
-          break;
-        case 'Completed':
-          setFilteredTodos(todoList.filter(todo => todo.completed === true));
-          break;
+        case FILTER_TYPES.ALL:
+          return setFilteredTodos(todoList);
+        case FILTER_TYPES.ACTIVE:
+          return setFilteredTodos(todoList.filter(todo => !todo.completed));
+        case FILTER_TYPES.COMPLETED:
+          return setFilteredTodos(todoList.filter(todo => todo.completed));
         default:
-          setFilteredTodos(todoList);
+          return setFilteredTodos(todoList);
       }
     },
     [todoList],
@@ -123,7 +112,7 @@ export const App: React.FC = () => {
           />
         )}
       </div>
-      <Error errorMessage={errorMessage} onClose={handleHideError} />
+      <Error error={errorMessage} setError={handleHideError} />
     </div>
   );
 };

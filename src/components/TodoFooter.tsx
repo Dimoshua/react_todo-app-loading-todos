@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Todo } from '../types/Todo';
+import { FILTER_TYPES } from '../types/FilterType';
 
 interface TodoFooterProps {
   todos: Todo[];
@@ -12,7 +13,7 @@ export const TodoFooter: React.FC<TodoFooterProps> = ({
   onFilter,
   onDeleteCompletedTodo,
 }) => {
-  const [option, setOption] = useState('All');
+  const [option, setOption] = useState(FILTER_TYPES.ALL);
   const countActiveTodo = todos.filter(todo => !todo.completed).length;
   const hasCompletedTodo = todos.some(todo => todo.completed);
 
@@ -39,27 +40,27 @@ export const TodoFooter: React.FC<TodoFooterProps> = ({
       <nav className="filter" data-cy="Filter">
         <a
           href="#/"
-          className={`filter__link ${option === 'All' ? 'selected' : ''}`}
+          className={`filter__link ${option === FILTER_TYPES.ALL ? 'selected' : ''}`}
           data-cy="FilterLinkAll"
-          onClick={handleFilterSelect('All')}
+          onClick={handleFilterSelect(FILTER_TYPES.ALL)}
         >
           All
         </a>
 
         <a
           href="#/active"
-          className={`filter__link ${option === 'Active' ? 'selected' : ''}`}
+          className={`filter__link ${option === FILTER_TYPES.ACTIVE ? 'selected' : ''}`}
           data-cy="FilterLinkActive"
-          onClick={handleFilterSelect('Active')}
+          onClick={handleFilterSelect(FILTER_TYPES.ACTIVE)}
         >
           Active
         </a>
 
         <a
           href="#/completed"
-          className={`filter__link ${option === 'Completed' ? 'selected' : ''}`}
+          className={`filter__link ${option === FILTER_TYPES.COMPLETED ? 'selected' : ''}`}
           data-cy="FilterLinkCompleted"
-          onClick={handleFilterSelect('Completed')}
+          onClick={handleFilterSelect(FILTER_TYPES.COMPLETED)}
         >
           Completed
         </a>
