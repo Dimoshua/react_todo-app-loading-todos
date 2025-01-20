@@ -39,7 +39,7 @@ export const TodoFooter: React.FC<TodoFooterProps> = ({
       </span>
 
       <nav className="filter" data-cy="Filter">
-      {Object.values(FILTER_TYPES).map(filter => (
+        {Object.values(FILTER_TYPES).map(filter => (
           <a
             key={filter}
             href={`#/${filter.toLowerCase()}`}
@@ -53,7 +53,7 @@ export const TodoFooter: React.FC<TodoFooterProps> = ({
           >
             {filter.charAt(0).toUpperCase() + filter.slice(1)}
           </a>
-      ))}
+        ))}
 
         {/* <a
           href="#/"
