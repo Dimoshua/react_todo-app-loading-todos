@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Todo } from '../types/Todo';
 import { FILTER_TYPES } from '../types/FilterType';
+import classNames from 'classnames';
 
 interface TodoFooterProps {
   todos: Todo[];
@@ -38,9 +39,27 @@ export const TodoFooter: React.FC<TodoFooterProps> = ({
       </span>
 
       <nav className="filter" data-cy="Filter">
-        <a
+      {Object.values(FILTER_TYPES).map(filter => (
+          <a
+            key={filter}
+            href={`#/${filter.toLowerCase()}`}
+            data-cy={`FilterLink${filter.charAt(0).toUpperCase() + filter.slice(1)}`}
+            className={classNames('filter__link', {
+              selected: option === filter,
+            })}
+            onClick={() => {
+              handleFilterSelect(filter);
+            }}
+          >
+            {filter.charAt(0).toUpperCase() + filter.slice(1)}
+          </a>
+      ))}
+
+        {/* <a
           href="#/"
-          className={`filter__link ${option === FILTER_TYPES.ALL ? 'selected' : ''}`}
+          className={classNames('filter__link',
+                    { 'selected': option === FILTER_TYPES.ALL },
+                  )}
           data-cy="FilterLinkAll"
           onClick={handleFilterSelect(FILTER_TYPES.ALL)}
         >
@@ -49,7 +68,9 @@ export const TodoFooter: React.FC<TodoFooterProps> = ({
 
         <a
           href="#/active"
-          className={`filter__link ${option === FILTER_TYPES.ACTIVE ? 'selected' : ''}`}
+          className={classNames('filter__link',
+            { 'selected': option === FILTER_TYPES.ACTIVE },
+          )}
           data-cy="FilterLinkActive"
           onClick={handleFilterSelect(FILTER_TYPES.ACTIVE)}
         >
@@ -58,12 +79,14 @@ export const TodoFooter: React.FC<TodoFooterProps> = ({
 
         <a
           href="#/completed"
-          className={`filter__link ${option === FILTER_TYPES.COMPLETED ? 'selected' : ''}`}
+          className={classNames('filter__link',
+            { 'selected': option === FILTER_TYPES.COMPLETED },
+          )}
           data-cy="FilterLinkCompleted"
           onClick={handleFilterSelect(FILTER_TYPES.COMPLETED)}
         >
           Completed
-        </a>
+        </a> */}
       </nav>
 
       <button

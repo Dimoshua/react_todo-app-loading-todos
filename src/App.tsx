@@ -1,8 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { getTodos, USER_ID } from './api/todos';
 
-import { Error, ErrorMessage } from './components/Errors';
-
+import { Error } from './components/Errors';
 import { TodoFooter } from './components/TodoFooter';
 import { TodoHeader } from './components/TodoHeader';
 import { TodoList } from './components/TodoList';
@@ -11,6 +10,7 @@ import { UserWarning } from './components/UserWarning';
 import { FILTER_TYPES } from './types/FilterType';
 
 import { Todo } from './types/Todo';
+import { ErrorMessage } from './types/types';
 
 export const App: React.FC = () => {
   const [todoList, setTodoList] = useState<Todo[]>([]);
