@@ -14,7 +14,7 @@ import { ErrorMessage } from './types/types';
 
 export const App: React.FC = () => {
   const [todoList, setTodoList] = useState<Todo[]>([]);
-  const [filteredTodos, setFilteredTodos] = useState<Todo[]>([]);
+  // const [filteredTodos, setFilteredTodos] = useState<Todo[]>([]);
 
   const [isLoading, setIsloading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -70,13 +70,13 @@ export const App: React.FC = () => {
     (option: string) => {
       switch (option) {
         case FILTER_TYPES.ALL:
-          return setFilteredTodos(todoList);
+          return todoList;
         case FILTER_TYPES.ACTIVE:
-          return setFilteredTodos(todoList.filter(todo => !todo.completed));
+          return todoList.filter(todo => !todo.completed);
         case FILTER_TYPES.COMPLETED:
-          return setFilteredTodos(todoList.filter(todo => todo.completed));
+          return todoList.filter(todo => todo.completed);
         default:
-          return setFilteredTodos(todoList);
+          return todoList;
       }
     },
     [todoList],
@@ -97,7 +97,7 @@ export const App: React.FC = () => {
         />
         {!isLoading && (
           <TodoList
-            todos={filteredTodos}
+            todos={todoList}
             isLoading={isLoading}
             onToggle={handleChangeToggle}
             onDelete={handleDeleteTodo}
