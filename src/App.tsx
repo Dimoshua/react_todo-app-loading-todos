@@ -1,118 +1,72 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { getTodos, USER_ID } from './api/todos';
-
-import { Error } from './components/Errors';
-import { TodoFooter } from './components/TodoFooter';
-import { TodoHeader } from './components/TodoHeader';
-import { TodoList } from './components/TodoList';
-import { UserWarning } from './components/UserWarning';
-
-import { FILTER_TYPES } from './types/FilterType';
+/* eslint-disable jsx-a11y/label-has-associated-control */
+/* eslint-disable jsx-a11y/control-has-associated-label */
+import React, { useEffect, useState } from 'react';
+import { UserWarning } from './UserWarning';
+import { getPreparedTodos } from './utils/todoFilter';
+import * as todoService from './api/todos';
 
 import { Todo } from './types/Todo';
-import { ErrorMessage } from './types/types';
+import { Filter } from './types/Filter';
+
+import { Notification } from './components/Error';
+import { Footer } from './components/Footer';
+import { TodoForm } from './components/Header';
+import { TodoList } from './components/TodoList';
 
 export const App: React.FC = () => {
-  const [todoList, setTodoList] = useState<Todo[]>([]);
-  // const [filteredTodos, setFilteredTodos] = useState<Todo[]>([]);
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [filterBy, setFilterBy] = useState(Filter.All);
 
-  const [isLoading, setIsloading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const preparedTodos = getPreparedTodos(todos, filterBy);
+  const completedTodos = todos.filter(todo => todo.completed);
+  const todoCount = todos.length - completedTodos.length;
 
-  useEffect(() => {
-    setIsloading(true);
-    getTodos()
-      .then(setTodoList)
-      .catch(() => setErrorMessage(ErrorMessage.Get))
-      .finally(() => setIsloading(false));
-  }, []);
-
-  const handleHideError = () => {
+  const loadTodos = () => {
     setErrorMessage('');
+    todoService
+      .getTodos()
+      .then(setTodos)
+      .catch(() => setErrorMessage('Unable to load todos'))
+      .then(() => {
+        setTimeout(() => {
+          setErrorMessage('');
+        }, 3000);
+      });
   };
 
-  const handleError = (error: string) => {
-    setErrorMessage(error);
-  };
+  useEffect(loadTodos, []);
 
-  const handleAddNewTodo = (newTodo: Todo) => {
-    setTodoList(prevTodos => [...prevTodos, newTodo]);
-  };
-
-  const markAllTodoCompleted = () => {
-    const isCompleted = todoList.every(todo => todo.completed);
-
-    const updatedTodo = todoList.map(todo => ({
-      ...todo,
-      completed: !isCompleted,
-    }));
-
-    setTodoList(updatedTodo);
-  };
-
-  const handleChangeToggle = (id: number) => {
-    setTodoList(prevTodo =>
-      prevTodo.map(todo =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo,
-      ),
-    );
-  };
-
-  const handleDeleteTodo = (id: number) => {
-    setTodoList(prevTodo => prevTodo.filter(todo => todo.id !== id));
-  };
-
-  const handleDeleteCompletedTodos = () => {
-    setTodoList(todoList.filter(todo => !todo.completed));
-  };
-
-  const handleFilterTodo = useCallback(
-    (option: string) => {
-      switch (option) {
-        case FILTER_TYPES.ALL:
-          return todoList;
-        case FILTER_TYPES.ACTIVE:
-          return todoList.filter(todo => !todo.completed);
-        case FILTER_TYPES.COMPLETED:
-          return todoList.filter(todo => todo.completed);
-        default:
-          return todoList;
-      }
-    },
-    [todoList],
-  );
-
-  if (!USER_ID) {
+  if (!todoService) {
     return <UserWarning />;
   }
 
   return (
-    <div className="todo-app">
+    <div className="todoapp">
       <h1 className="todoapp__title">todos</h1>
+
       <div className="todoapp__content">
-        <TodoHeader
-          onError={handleError}
-          onAddTodo={handleAddNewTodo}
-          onCompleted={markAllTodoCompleted}
-        />
-        {!isLoading && (
-          <TodoList
-            todos={todoList}
-            isLoading={isLoading}
-            onToggle={handleChangeToggle}
-            onDelete={handleDeleteTodo}
-            onError={handleError}
-          />
-        )}
-        {todoList.length !== 0 && (
-          <TodoFooter
-            todos={todoList}
-            onFilter={handleFilterTodo}
-            onDeleteCompletedTodo={handleDeleteCompletedTodos}
+        <header className="todoapp__header">
+          <TodoForm todos={todos} />
+        </header>
+
+        <TodoList preparedTodos={preparedTodos} errorMessage={errorMessage} />
+
+        {!errorMessage && (
+          <Footer
+            todos={todos}
+            errorMessage={errorMessage}
+            setFilterBy={setFilterBy}
+            filterBy={filterBy}
+            todoCount={todoCount}
           />
         )}
       </div>
-      <Error error={errorMessage} setError={handleHideError} />
+
+      <Notification
+        errorMessage={errorMessage}
+        onClose={() => setErrorMessage('')}
+      />
     </div>
   );
 };

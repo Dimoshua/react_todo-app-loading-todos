@@ -1,97 +1,39 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-/* eslint-disable jsx-a11y/control-has-associated-label */
-import { ErrorMessage } from '../types/types';
-import classNames from 'classnames';
+import React from 'react';
+import { Todo } from '../types/Todo';
+import cn from 'classnames';
 
-interface TodoItemProps {
-  id: number;
-  title: string;
-  completed: boolean;
-  isLoading: boolean;
-  onToggle: (id: number) => void;
-  onDelete: (id: number) => void;
-  onError: (error: string) => void;
-}
+type Props = {
+  todo: Todo;
+  errorMessage: string;
+};
 
-export const TodoItem: React.FC<TodoItemProps> = ({
-  id,
-  title,
-  completed,
-  isLoading,
-  onToggle,
-  onDelete,
-  onError,
-}) => {
-  const handleCheckboxChange = () => {
-    onToggle(id);
-  };
-
-  // interface TodoItemProps {
-  //   id: number;
-  //   title: string;
-  //   completed: boolean;
-  //   isLoading: boolean;
-  //   onToggle: (id: number) => void;
-  //   onDelete: (id: number) => void;
-  //   onError: (error: string) => void;
-  // }
-
-  // interface Props {
-  //   todo: TodoItemProps;
-  // }
-
-  // export const TodoItem: React.FC<Props> = ({ todo }) => {
-  //   const handleCheckboxChange = () => {
-  //     todo.onToggle(todo.id);
-  //   };
-
-  const handleDeleteTodo = () => {
-    if (id) {
-      onDelete(id);
-    } else {
-      onError(ErrorMessage.Delete);
-    }
-  };
+export const TodoItem: React.FC<Props> = ({ todo }) => {
+  const { id, title, completed } = todo;
 
   return (
-    <div>
-      <div
-        data-cy="Todo"
-        // className={`todo ${todo.completed ? 'todo completed' : ''} ${todo.isLoading ? 'is-active' : ''}`}
+    <div data-cy="Todo" className={cn('todo', { completed: completed })}>
+      <label className="todo__status-label">
+        <input
+          data-cy="TodoStatus"
+          type="checkbox"
+          className="todo__status"
+          value={id}
+          checked={completed}
+        />
+      </label>
 
-        className={classNames(
-          'todo',
-          { 'todo completed': completed === true },
-          { 'is-active': isLoading === true },
-        )}
-      >
-        <label className="todo__status-label">
-          <input
-            data-cy="TodoStatus"
-            type="checkbox"
-            className="todo__status"
-            checked={completed}
-            onChange={handleCheckboxChange}
-          />
-        </label>
+      <span data-cy="TodoTitle" className="todo__title">
+        {title}
+      </span>
 
-        <span data-cy="TodoTitle" className="todo__title">
-          {title}
-        </span>
+      <button type="button" className="todo__remove" data-cy="TodoDelete">
+        ×
+      </button>
 
-        <button
-          type="button"
-          className="todo__remove"
-          data-cy="TodoDelete"
-          onClick={handleDeleteTodo}
-        >
-          ×
-        </button>
-
-        <div data-cy="TodoLoader" className="modal overlay">
-          <div className="modal-background has-background-white-ter" />
-          <div className="loader" />
-        </div>
+      <div data-cy="TodoLoader" className="modal overlay">
+        <div className="modal-background has-background-white-ter" />
+        <div className="loader" />
       </div>
     </div>
   );
